@@ -6,7 +6,7 @@ from sqlalchemy import (
     ForeignKey,
 )
 from sqlalchemy.orm import relationship
-from .base import Base
+from models.base import Base
 
 
 class Ticket(Base):
