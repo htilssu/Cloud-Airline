@@ -1,4 +1,7 @@
-version: '3.8'
+x-postgres-variables: &postgres-env
+  POSTGRES_DB: mydatabase
+  POSTGRES_USER: myuser
+  POSTGRES_PASSWORD: mypassword
 
 services:
   server:
@@ -10,9 +13,14 @@ services:
       - "5678:5678"
     volumes:
       - ./server:/app
+    environment:
+      <<: *postgres-env
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
     command: >
       sh -c "pip install debugpy -q &&
              python -m debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - db
 
   web:
     build:
@@ -27,3 +35,15 @@ services:
       - VITE_API_URL=http://server:8000
     depends_on:
       - server
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      <<: *postgres-env
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
