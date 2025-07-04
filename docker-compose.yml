@@ -16,7 +16,6 @@ services:
       - ./server:/app
     environment:
       <<: *postgres-env
-    entrypoint: ["entrypoint.sh"]
     depends_on:
       db:
         condition: service_healthy
