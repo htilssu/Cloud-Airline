@@ -41,7 +41,7 @@ Môi trường phát triển cho frontend đã được container hóa hoàn to�
     docker-compose up --build
     ```
 
-    Lệnh này sẽ khởi động frontend, backend và database. Frontend sẽ chạy tại `http://localhost:5173`.
+    Lệnh này sẽ khởi động frontend, backend và database. Frontend sẽ chạy tại `http://localhost:3000`.
 
 2.  **Bắt đầu code:**
     Mở thư mục `web` trong VS Code. Mọi thay đổi bạn lưu sẽ được tự động cập nhật trên trình duyệt.
@@ -111,7 +111,7 @@ Môi trường phát triển cho frontend đã được container hóa hoàn to�
 
 | Service  | URL trên máy Host       | URL bên trong Docker (từ container khác) |
 | :------- | :---------------------- | :--------------------------------------- |
-| Frontend | `http://localhost:5173` | `http://web:5173`                        |
+| Frontend | `http://localhost:3000` | `http://web:3000`                        |
 | Backend  | `http://localhost:8000` | `http://server:8000`                     |
 | Database | `localhost:5432`        | `db:5432`                                |
 
