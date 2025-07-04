@@ -5,6 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from models.base import Base
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -15,13 +17,16 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Set the database URL from the environment variable
-config.set_main_option('sqlalchemy.url', os.environ['DATABASE_URL'])
-
+db_user = os.getenv("POSTGRES_USER", "myuser")
+db_password = os.getenv("POSTGRES_PASSWORD", "mypassword")
+db_endpoint = os.getenv("DATABASE_ENDPOINT", "db")
+db_name = os.getenv("POSTGRES_DB", "mydatabase")
+config.set_main_option('sqlalchemy.url', f"postgresql://{db_user}:{db_password}@{db_endpoint}:5432/{db_name}")
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+
+
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -67,9 +72,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
