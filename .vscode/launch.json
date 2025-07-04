@@ -16,6 +16,22 @@
       "type": "node-terminal",
       "cwd": "${workspaceFolder}/web",
       "command": "pnpm run dev"
+    },
+    {
+      "name": "Python: Attach to Docker",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/server",
+          "remoteRoot": "/app"
+        }
+      ],
+      "justMyCode": true
     }
   ],
   "compounds": [
