@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: FastAPI",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["main:app", "--reload"],
+      "cwd": "${workspaceFolder}/server",
+      "python": "${workspaceFolder}/server/venv/Scripts/python.exe"
+    },
+    {
+      "name": "Launch web",
+      "request": "launch",
+      "type": "node-terminal",
+      "cwd": "${workspaceFolder}/web",
+      "command": "pnpm run dev"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch FE and BE",
+      "configurations": ["Python: FastAPI", "Launch web"]
+    }
+  ]
+}
