@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from .base import Base
+from models.base import Base
 
 
 class Airport(Base):

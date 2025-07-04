@@ -21,7 +21,7 @@ services:
       db:
         condition: service_healthy
     command: >
-      sh -c "python -Xfrozen_modules=off -m debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+      sh -c "python -Xfrozen_modules=off -m debugpy --listen 0.0.0.0:5678 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
 
   web:
     build:
@@ -33,7 +33,7 @@ services:
       - ./web:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://server:8000
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - server
 
