@@ -6,7 +6,11 @@ WORKDIR /app
 
 # Copy file requirements và cài đặt dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && pip install debugpy
+
+# Copy entrypoint script
+COPY .docker/entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy toàn bộ source code của server vào container
 COPY . .
