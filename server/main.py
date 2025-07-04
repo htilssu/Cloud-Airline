@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from routers import flights
+from middlewares.case_converter import CaseConverterMiddleware
 
 app = FastAPI()
+
+app.add_middleware(CaseConverterMiddleware)
 
 # Configure CORS
 origins = [
@@ -17,7 +21,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(flights.router, prefix="/flights", tags=["Chuyến bay"])

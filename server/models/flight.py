@@ -32,8 +32,8 @@ class Flight(Base):
     status = Column(Enum(FlightStatus), nullable=False, default=FlightStatus.SCHEDULED)
 
     plane_id = Column(Integer, ForeignKey("planes.id"), nullable=False)
-    departure_airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
-    arrival_airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
+    departure_airport_id = Column(String(3), ForeignKey("airports.id"), nullable=False)
+    arrival_airport_id = Column(String(3), ForeignKey("airports.id"), nullable=False)
 
     plane = relationship("Plane", back_populates="flights")
     departure_airport = relationship("Airport", foreign_keys=[departure_airport_id])

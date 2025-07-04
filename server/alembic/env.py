@@ -1,10 +1,10 @@
 from logging.config import fileConfig
-import os
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
 
+# Import settings from your application
+from config import settings
 from models.base import Base
 
 # this is the Alembic Config object, which provides
@@ -16,17 +16,13 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Set the database URL from the environment variable
-db_user = os.getenv("POSTGRES_USER", "myuser")
-db_password = os.getenv("POSTGRES_PASSWORD", "mypassword")
-db_endpoint = os.getenv("DATABASE_ENDPOINT", "db")
-db_name = os.getenv("POSTGRES_DB", "mydatabase")
-config.set_main_option('sqlalchemy.url', f"postgresql://{db_user}:{db_password}@{db_endpoint}:5432/{db_name}")
+# Set the database URL from the settings object
+config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
+
 # add your model's MetaData object here
 # for 'autogenerate' support
-
-
 target_metadata = Base.metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
