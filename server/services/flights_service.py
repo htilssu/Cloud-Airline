@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from models.flight import Flight
-from datetime import date
+from datetime import date, timedelta
 
 
 def get_flights(
@@ -14,9 +13,12 @@ def get_flights(
 ):
     query = db.query(Flight)
     if flight_date:
-        query = query.filter(func.date(Flight.departure_time) == flight_date)
+        query = query.filter(
+            Flight.departure_time >= flight_date,
+            Flight.departure_time < flight_date + timedelta(days=1),
+        )
     else:
-        query = query.filter(func.date(Flight.departure_time) >= date.today())
+        query = query.filter(Flight.departure_time >= date.today())
 
     if departure_airport_id:
         query = query.filter(Flight.departure_airport_id == departure_airport_id)
