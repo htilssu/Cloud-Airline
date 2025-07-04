@@ -12,3 +12,5 @@ starlette==0.46.2
 typing-inspection==0.4.1
 typing_extensions==4.14.0
 uvicorn==0.35.0
+alembic==1.13.1
+psycopg2-binary==2.9.9
