@@ -9,7 +9,7 @@ from sqlalchemy import (
     Enum,
 )
 from sqlalchemy.orm import relationship
-from .base import Base
+from models.base import Base
 
 
 class BookingStatus(enum.Enum):
