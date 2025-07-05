@@ -28,5 +28,18 @@ def get_flights(
     return query.offset(skip).limit(limit).all()
 
 
+def get_flight_by_id_or_number(db: Session, flight_id_or_number: str):
+    try:
+        # Thử chuyển đổi flight_id_or_number thành int
+        flight_id = int(flight_id_or_number)
+        # Nếu thành công, tìm kiếm theo id
+        return db.query(Flight).filter(Flight.id == flight_id).first()
+    except ValueError:
+        # Nếu không phải int, tìm kiếm theo flight_number
+        return (
+            db.query(Flight).filter(Flight.flight_number == flight_id_or_number).first()
+        )
+
+
 def get_flight_by_number(db: Session, flight_number: str):
     return db.query(Flight).filter(Flight.flight_number == flight_number).first()

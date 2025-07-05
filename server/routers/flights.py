@@ -64,9 +64,9 @@ def read_flights(
 
 
 @router.get(
-    "/{flight_number}",
+    "/{flight_id_or_number}",
     tags=["Chuyến bay"],
-    name="Lấy thông tin chi tiết chuyến bay dựa vào số hiệu chuyến bay",
+    name="Lấy thông tin chi tiết chuyến bay dựa vào số hiệu chuyến bay hoặc ID",
     description="Lấy thông tin chuyến bay",
     responses={
         200: {
@@ -79,8 +79,10 @@ def read_flights(
         },
     },
 )
-def read_flight(flight_number: str, db: Session = Depends(get_db)):
-    db_flight = flights_service.get_flight_by_number(db, flight_number=flight_number)
+def read_flight(flight_id_or_number: str, db: Session = Depends(get_db)):
+    db_flight = flights_service.get_flight_by_id_or_number(
+        db, flight_id_or_number=flight_id_or_number
+    )
     if db_flight is None:
         raise HTTPException(status_code=404, detail="Chuyến bay không tồn tại")
     return db_flight
