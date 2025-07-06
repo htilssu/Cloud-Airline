@@ -1,82 +1,113 @@
 import json
 import re
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-from starlette.requests import Request
-from starlette.responses import Response, JSONResponse
-from starlette.types import ASGIApp
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 
 def to_snake_case(s: str) -> str:
-    """Converts a camelCase string to snake_case."""
     return re.sub(r"(?<!^)(?=[A-Z])", "_", s).lower()
 
 
 def to_camel_case(s: str) -> str:
-    """Converts a snake_case string to camelCase."""
     parts = s.split("_")
-    return parts[0] + "".join(p.capitalize() for p in parts[1:])
+    return parts[0] + "".join(word.capitalize() for word in parts[1:])
 
 
-def convert_dict_keys(d, converter_func):
-    """Recursively converts dictionary keys using the provided converter function."""
-    if isinstance(d, list):
-        return [convert_dict_keys(i, converter_func) for i in d]
-    if not isinstance(d, dict):
-        return d
-    return {
-        converter_func(k): convert_dict_keys(v, converter_func) for k, v in d.items()
-    }
+def convert_dict_keys(data, converter_func):
+    if isinstance(data, dict):
+        return {
+            converter_func(k): convert_dict_keys(v, converter_func)
+            for k, v in data.items()
+        }
+    elif isinstance(data, list):
+        return [convert_dict_keys(i, converter_func) for i in data]
+    return data
 
 
-class CaseConverterMiddleware(BaseHTTPMiddleware):
+class CaseConverterMiddleware:
     def __init__(self, app: ASGIApp):
-        super().__init__(app)
+        self.app = app
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
-        # Convert request body from camelCase to snake_case
-        if "application/json" in request.headers.get("content-type", ""):
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        original_body = b""
+        more_body = True
+
+        # Đọc toàn bộ request body
+        while more_body:
+            message = await receive()
+            body = message.get("body", b"")
+            more_body = message.get("more_body", False)
+            original_body += body
+
+        # Convert body nếu là JSON
+        headers = dict(scope.get("headers", []))
+        content_type = headers.get(b"content-type", b"").decode()
+        if "application/json" in content_type:
             try:
-                body = await request.body()
-                if body:
-                    json_body = json.loads(body)
-                    converted_body = convert_dict_keys(json_body, to_snake_case)
+                parsed = json.loads(original_body)
+                converted = convert_dict_keys(parsed, to_snake_case)
+                new_body = json.dumps(converted).encode("utf-8")
+            except Exception:
+                new_body = original_body
+        else:
+            new_body = original_body
 
-                    # Create a new request with the modified body
-                    async def receive():
-                        return {
-                            "type": "http.request",
-                            "body": json.dumps(converted_body).encode("utf-8"),
+        # Tạo receive mới
+        async def receive_wrapper():
+            return {"type": "http.request", "body": new_body, "more_body": False}
+
+        # Biến lưu tạm response để xử lý sửa body
+        captured_body = b""
+        response_start = {}
+
+        async def send_wrapper(message):
+            nonlocal captured_body, response_start
+
+            if message["type"] == "http.response.start":
+                # Lưu lại để chỉnh sau
+                response_start = message.copy()
+
+            elif message["type"] == "http.response.body":
+                captured_body += message.get("body", b"")
+
+                if not message.get("more_body", False):
+                    # Chuyển body -> camelCase nếu là JSON
+                    headers_dict = dict(response_start.get("headers", []))
+                    content_type = headers_dict.get(b"content-type", b"").decode()
+
+                    if "application/json" in content_type:
+                        try:
+                            parsed = json.loads(captured_body)
+                            converted = convert_dict_keys(parsed, to_camel_case)
+                            final_body = json.dumps(converted).encode("utf-8")
+                        except Exception:
+                            final_body = captured_body
+                    else:
+                        final_body = captured_body
+
+                    # Gửi lại response mới mà không set content-length
+                    headers = [
+                        (k, v)
+                        for k, v in response_start["headers"]
+                        if k.lower() != b"content-length"
+                    ]
+
+                    await send(
+                        {
+                            "type": "http.response.start",
+                            "status": response_start["status"],
+                            "headers": headers,
                         }
-
-                    request = Request(request.scope, receive)
-            except json.JSONDecodeError:
-                # Handle cases where body is not valid JSON
-                pass
-
-        response = await call_next(request)
-
-        # Convert response body from snake_case to camelCase
-        if "application/json" in response.headers.get("content-type", ""):
-            response_body = b""
-            async for chunk in response.body_iterator:
-                response_body += chunk
-
-            try:
-                if response_body:
-                    json_body = json.loads(response_body)
-                    converted_body = convert_dict_keys(json_body, to_camel_case)
-                    return JSONResponse(
-                        content=converted_body, status_code=response.status_code
                     )
-            except json.JSONDecodeError:
-                # If response is not valid JSON, return it as is
-                return Response(
-                    content=response_body,
-                    status_code=response.status_code,
-                    headers=dict(response.headers),
-                    media_type=response.media_type,
-                )
+                    await send(
+                        {
+                            "type": "http.response.body",
+                            "body": final_body,
+                            "more_body": False,
+                        }
+                    )
 
-        return response
+        await self.app(scope, receive_wrapper, send_wrapper)
