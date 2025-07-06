@@ -15,3 +15,6 @@ typing_extensions==4.14.0
 uvicorn==0.35.0
 alembic==1.13.1
 psycopg2-binary==2.9.9
+passlib==1.7.4
+bcrypt==4.0.1
+email-validator==2.1.0.post1
