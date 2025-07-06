@@ -6,6 +6,7 @@ x-postgres-variables: &postgres-env
 
 services:
   server:
+    image: htilssu/server:dev
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -14,6 +15,7 @@ services:
       - "5678:5678"
     volumes:
       - ./server:/app
+      - /app/.docker/
     environment:
       <<: *postgres-env
     depends_on:
@@ -21,9 +23,10 @@ services:
         condition: service_healthy
     entrypoint: ["/app/.docker/entrypoint-dev.sh"]
     command: >
-      sh -c "python -Xfrozen_modules=off -m debugpy --listen 0.0.0.0:5678 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+      python -Xfrozen_modules=off -m debugpy --listen 0.0.0.0:5678 -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   web:
+    image: htilssu/web:dev
     build:
       context: ./web
       dockerfile: Dockerfile
