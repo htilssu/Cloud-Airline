@@ -5,7 +5,9 @@ set -e
 
 # Source environment variables
 if [ -f .env ]; then
-    export $(cat .env | sed 's/#.*//g' | xargs)
+    set -a
+    . .env
+    set +a
 fi
 
 # If the first argument is "alembic", run the alembic command
