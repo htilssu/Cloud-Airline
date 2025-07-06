@@ -8,7 +8,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = decode_access_token(token)
     if not payload or "sub" not in payload:
         raise HTTPException(
-            status_code= status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token"
         )
     return payload["sub"] 

@@ -9,4 +9,14 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 def decode_access_token(token: str):
-    return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    try:
+        return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        # Token has expired
+        return None
+    except jwt.InvalidTokenError:
+        # Token is invalid (malformed, wrong signature, etc.)
+        return None
+    except Exception:
+        # Catch any other unexpected JWT-related errors
+        return None
