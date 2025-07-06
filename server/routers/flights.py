@@ -30,12 +30,15 @@ router = APIRouter()
 def read_flights(
     skip: int = 0,
     limit: int = 100,
-    flight_date: str
-    | None = Query(default=None, description="Ngày bay theo định dạng dd/MM/yyyy"),
-    departure_airport_id: str
-    | None = Query(default=None, description="Mã sân bay đi (VD: HAN)"),
-    arrival_airport_id: str
-    | None = Query(default=None, description="Mã sân bay đến (VD: SGN)"),
+    flight_date: str | None = Query(
+        default=None, description="Ngày bay theo định dạng dd/MM/yyyy"
+    ),
+    departure_airport_id: str | None = Query(
+        default=None, description="Mã sân bay đi (VD: HAN)"
+    ),
+    arrival_airport_id: str | None = Query(
+        default=None, description="Mã sân bay đến (VD: SGN)"
+    ),
     db: Session = Depends(get_db),
 ):
     parsed_date: date | None = None
@@ -79,7 +82,12 @@ def read_flights(
         },
     },
 )
-def read_flight(flight_id_or_number: str, db: Session = Depends(get_db)):
+def read_flight(
+    flight_id_or_number: str = Query(
+        ..., description="Số hiệu chuyến bay hoặc ID chuyến bay"
+    ),
+    db: Session = Depends(get_db),
+):
     db_flight = flights_service.get_flight_by_id_or_number(
         db, flight_id_or_number=flight_id_or_number
     )
