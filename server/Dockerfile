@@ -15,12 +15,6 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 # Copy toàn bộ source code của server vào container
 COPY . .
 
-# Copy entrypoint-dev.sh sau cùng để không bị ghi đè
-COPY .docker/entrypoint-dev.sh .docker/entrypoint-dev.sh
-RUN chmod +x .docker/entrypoint-dev.sh
-
-# Copy .env file
-COPY .env .env
 # Expose port 8000 mà uvicorn sẽ chạy
 EXPOSE 8000
 
