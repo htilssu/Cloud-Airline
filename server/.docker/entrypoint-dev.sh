@@ -6,7 +6,7 @@ set -e
 # Source environment variables
 if [ -f .env ]; then
     set -a
-    . .env
+    . /app/.env
     set +a
 fi
 
@@ -25,4 +25,8 @@ echo "Seeding database..."
 python -m seed
 
 # Now execute the main command (passed as arguments to this script)
-exec "$@"
+if [ $# -gt 0 ]; then
+    exec "$@"
+else
+    exec uvicorn main:app --host 0.0.0.0 --port 8000
+fi
