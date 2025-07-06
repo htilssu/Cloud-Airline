@@ -22,5 +22,17 @@ app.add_middleware(
 app.add_middleware(CaseConverterMiddleware)
 
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint để kiểm tra server có đang hoạt động không"""
+    return {"status": "healthy", "message": "Server đang hoạt động bình thường"}
+
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {"message": "QLDAPM API Server", "status": "running"}
+
+
 app.include_router(auth.router)
 app.include_router(flights.router, prefix="/flights", tags=["Chuyến bay"])

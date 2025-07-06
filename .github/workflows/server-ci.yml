@@ -1,0 +1,222 @@
+name: Server CI/CD
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+    paths:
+      - "server/**"
+      - ".github/workflows/server-ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "server/**"
+
+jobs:
+  test-server:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: mydatabase
+          POSTGRES_USER: myuser
+          POSTGRES_PASSWORD: mypassword
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('server/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        working-directory: ./server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set environment variables
+        run: |
+          echo "DATABASE_ENDPOINT=localhost" >> $GITHUB_ENV
+          echo "POSTGRES_DB=mydatabase" >> $GITHUB_ENV
+          echo "POSTGRES_USER=myuser" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=mypassword" >> $GITHUB_ENV
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U myuser; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
+      - name: Run database migrations
+        working-directory: ./server
+        run: |
+          alembic upgrade head
+
+      - name: Seed database
+        working-directory: ./server
+        run: |
+          python -m seed
+
+      - name: Test server startup
+        working-directory: ./server
+        run: |
+          # Chạy server trong background
+          python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
+          SERVER_PID=$!
+
+          # Đợi server khởi động
+          sleep 10
+
+          # Kiểm tra server có đang chạy không
+          if curl -f http://localhost:8000/health > /dev/null 2>&1; then
+            echo "✅ Server started successfully"
+            kill $SERVER_PID
+            exit 0
+          else
+            echo "❌ Server failed to start"
+            kill $SERVER_PID
+            exit 1
+          fi
+
+      - name: Run tests (if exists)
+        working-directory: ./server
+        run: |
+          if [ -f "pytest.ini" ] || [ -d "tests" ]; then
+            pip install pytest pytest-asyncio httpx
+            pytest
+          else
+            echo "No tests found, skipping..."
+          fi
+
+  build-docker-image:
+    needs: test-server
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub (optional)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: htilssu/server
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: false
+          tags: htilssu/cloud-airline-server:latest
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Docker image
+        run: |
+          # Build image locally để test
+          docker build -t server-test ./server
+
+          # Tạo network cho test
+          docker network create test-network
+
+          # Chạy PostgreSQL container
+          docker run -d \
+            --name test-postgres \
+            --network test-network \
+            -e POSTGRES_DB=mydatabase \
+            -e POSTGRES_USER=myuser \
+            -e POSTGRES_PASSWORD=mypassword \
+            postgres:15-alpine
+
+          # Đợi PostgreSQL sẵn sàng
+          sleep 15
+
+          # Chạy server container
+          docker run -d \
+            --name test-server \
+            --network test-network \
+            -e DATABASE_ENDPOINT=test-postgres \
+            -e POSTGRES_DB=mydatabase \
+            -e POSTGRES_USER=myuser \
+            -e POSTGRES_PASSWORD=mypassword \
+            -p 8000:8000 \
+            server-test
+
+          # Đợi server khởi động
+          sleep 20
+
+          # Test server
+          if curl -f http://localhost:8000/health > /dev/null 2>&1; then
+            echo "✅ Docker image works correctly"
+          else
+            echo "❌ Docker image failed to start"
+            docker logs test-server
+            exit 1
+          fi
+
+          # Cleanup
+          docker stop test-server test-postgres
+          docker rm test-server test-postgres
+          docker network rm test-network
+
+      - name: Push Docker image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  notify-success:
+    needs: [test-server, build-docker-image]
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Notify success
+        run: |
+          echo "🎉 Server tests passed và Docker image được build thành công!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
