@@ -83,9 +83,7 @@ def read_flights(
     },
 )
 def read_flight(
-    flight_id_or_number: str = Query(
-        ..., description="Số hiệu chuyến bay hoặc ID chuyến bay"
-    ),
+    flight_id_or_number: str,
     db: Session = Depends(get_db),
 ):
     db_flight = flights_service.get_flight_by_id_or_number(
