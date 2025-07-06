@@ -5,8 +5,9 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy file requirements và cài đặt dependencies
+RUN pip install debugpy
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && pip install debugpy
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy entrypoint script
 COPY .docker/entrypoint.sh /usr/local/bin/
