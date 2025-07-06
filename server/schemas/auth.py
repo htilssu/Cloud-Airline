@@ -45,3 +45,10 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True  # For SQLAlchemy model conversion
+
+
+class TokenResponse(BaseModel):
+    """Schema for token response after login."""
+    
+    access_token: str
+    token_type: str = "bearer"
