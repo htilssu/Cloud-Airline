@@ -48,7 +48,7 @@ class AuthService:
             hashed_password=self.get_password_hash(user_data.password),
             full_name=user_data.full_name,
             phone_number=user_data.phone_number,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(),
             is_active=True,
             is_verified=False,
         )
@@ -92,7 +92,7 @@ class AuthService:
 
         # Update last login time
         try:
-            user.last_login_at = datetime.utcnow()
+            user.last_login_at = datetime.now()
             self.db.commit()
             self.db.refresh(user)
         except Exception:
