@@ -7,3 +7,4 @@ from models.flight import Flight
 from models.ticket_type import TicketType
 from models.booking import Booking
 from models.ticket import Ticket
+from models.addon_option import AddonOption

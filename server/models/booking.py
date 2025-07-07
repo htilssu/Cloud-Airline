@@ -1,5 +1,5 @@
 import enum
-import datetime
+from datetime import datetime
 from sqlalchemy import (
     Column,
     Integer,
@@ -23,7 +23,7 @@ class Booking(Base):
 
     __tablename__ = "bookings"
     id = Column(Integer, primary_key=True, index=True)
-    booking_time = Column(DateTime, default=datetime.datetime.utcnow)
+    booking_time = Column(DateTime, default=datetime.now)
     total_price = Column(Float, nullable=False)
     status = Column(Enum(BookingStatus), nullable=False, default=BookingStatus.PENDING)
 

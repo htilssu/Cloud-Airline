@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import flights, auth
+from routers import flights, auth, ticket_options
 from middlewares.case_converter import CaseConverterMiddleware
 
 app = FastAPI()
@@ -36,3 +36,4 @@ async def root():
 
 app.include_router(auth.router)
 app.include_router(flights.router, prefix="/flights", tags=["Chuyến bay"])
+app.include_router(ticket_options.router, prefix="/ticket-options", tags=["Vé máy bay"])
