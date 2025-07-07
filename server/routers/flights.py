@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
 from typing import List
 from datetime import date, datetime
 
 from schemas import Flight
-from database import get_db
-from services import flights_service
+from services.flights_service import FlightsService, get_flights_service
 from schemas.error import Error
 
 router = APIRouter()
@@ -39,7 +37,7 @@ def read_flights(
     arrival_airport_id: str | None = Query(
         default=None, description="Mã sân bay đến (VD: SGN)"
     ),
-    db: Session = Depends(get_db),
+    flights_service: FlightsService = Depends(get_flights_service),
 ):
     parsed_date: date | None = None
     if flight_date:
@@ -55,8 +53,8 @@ def read_flights(
                 status_code=400,
                 detail="Định dạng ngày không hợp lệ. Vui lòng sử dụng định dạng dd/MM/yyyy.",
             )
+
     flights = flights_service.get_flights(
-        db,
         skip=skip,
         limit=limit,
         flight_date=parsed_date,
@@ -84,10 +82,10 @@ def read_flights(
 )
 def read_flight(
     flight_id_or_number: str,
-    db: Session = Depends(get_db),
+    flights_service: FlightsService = Depends(get_flights_service),
 ):
     db_flight = flights_service.get_flight_by_id_or_number(
-        db, flight_id_or_number=flight_id_or_number
+        flight_id_or_number=flight_id_or_number
     )
     if db_flight is None:
         raise HTTPException(status_code=404, detail="Chuyến bay không tồn tại")

@@ -6,12 +6,46 @@ from database import SessionLocal
 from models.airport import Airport
 from models.plane import Plane
 from models.flight import Flight, FlightStatus
+from models.ticket_type import TicketType
 
 
 def seed_data():
     """Seeds the database with initial data."""
     db: Session = SessionLocal()
     try:
+        # Seed Ticket Types
+        try:
+            if not db.query(TicketType).first():
+                ticket_types = [
+                    TicketType(
+                        name="Economy",
+                        price_multiplier=1.0,
+                        base_baggage_allowance_kg=20,
+                    ),
+                    TicketType(
+                        name="Premium Economy",
+                        price_multiplier=1.5,
+                        base_baggage_allowance_kg=25,
+                    ),
+                    TicketType(
+                        name="Business",
+                        price_multiplier=2.5,
+                        base_baggage_allowance_kg=35,
+                    ),
+                    TicketType(
+                        name="VIP", price_multiplier=4.0, base_baggage_allowance_kg=50
+                    ),
+                ]
+                db.add_all(ticket_types)
+                db.commit()
+                print("Ticket types seeded.")
+            else:
+                print("Ticket types already exist.")
+        except Exception as e:
+            print(f"Error seeding ticket types: {e}")
+            traceback.print_exc()
+            db.rollback()
+
         # Seed Airports
         try:
             if not db.query(Airport).first():
