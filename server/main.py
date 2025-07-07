@@ -36,4 +36,4 @@ async def root():
 
 app.include_router(auth.router)
 app.include_router(flights.router, prefix="/flights", tags=["Chuyến bay"])
-app.include_router(ticket_options.router, prefix="/api", tags=["Vé máy bay"])
+app.include_router(ticket_options.router, prefix="/ticket-options", tags=["Vé máy bay"])

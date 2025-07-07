@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 from models.addon_option import AddonOption
-from typing import List, Dict, Any
+from typing import List
 from fastapi import Depends
 from database import get_db
 import json
+from schemas.addon_option import AddonOptionsGroupedByCategory
 
 
 class AddonOptionsService:
@@ -21,12 +22,24 @@ class AddonOptionsService:
         return (
             self.db.query(AddonOption)
             .filter(AddonOption.category == category, AddonOption.is_active == True)
+            .order_by(AddonOption.category, AddonOption.name, AddonOption.price)
             .all()
         )
 
-    def get_addon_options_grouped_by_category(self) -> Dict[str, Dict[str, Any]]:
+    def get_all_addon_options_grouped_by_category(self) -> List[AddonOption]:
+        """Lấy tất cả addon options được nhóm theo category"""
+        return (
+            self.db.query(AddonOption)
+            .filter(AddonOption.is_active == True)
+            .order_by(AddonOption.category, AddonOption.name, AddonOption.price)
+            .all()
+        )
+
+    def get_addon_options_grouped_by_category(
+        self,
+    ) -> List[AddonOptionsGroupedByCategory]:
         """Lấy addon options được nhóm theo category"""
-        all_options = self.get_all_addon_options()
+        all_options = self.get_all_addon_options_grouped_by_category()
 
         # Định nghĩa tên hiển thị cho các category
         category_names = {
@@ -36,34 +49,15 @@ class AddonOptionsService:
             "service": "Dịch vụ khác",
         }
 
-        grouped = {}
-        for option in all_options:
-            category = option.category
-            if category not in grouped:
-                grouped[category] = {
-                    "category": category,
-                    "category_name": category_names.get(category, category.title()),
-                    "options": [],
-                }
-
-            # Parse metadata JSON
-            metadata = None
-            if option.metadata_json:
-                try:
-                    metadata = json.loads(option.metadata_json)
-                except json.JSONDecodeError:
-                    metadata = None
-
-            grouped[category]["options"].append(
-                {
-                    "id": option.id,
-                    "name": option.name,
-                    "category": option.category,
-                    "description": option.description,
-                    "price": option.price,
-                    "is_active": option.is_active,
-                    "metadata": metadata,
-                }
+        grouped: List[AddonOptionsGroupedByCategory] = []
+        for k, v in category_names.items():
+            options = [x for x in all_options if x.category == k]
+            for option in options:
+                option.metadata = json.loads(option.metadata_json)
+            grouped.append(
+                AddonOptionsGroupedByCategory(
+                    category=k, category_name=v, options=options
+                )
             )
 
         return grouped

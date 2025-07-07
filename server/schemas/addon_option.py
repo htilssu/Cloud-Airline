@@ -17,6 +17,7 @@ class AddonOption(AddonOptionBase):
 
     class Config:
         from_attributes = True
+        fields = {"metadata_json": {"exclude": True}}
 
     @property
     def metadata(self) -> Optional[Dict[str, Any]]:
@@ -45,6 +46,14 @@ class AddonOptionResponse(AddonOption):
 
 
 class AddonCategory(BaseModel):
+    """Schema for grouping addons by category"""
+
+    category: str
+    category_name: str
+    options: list[AddonOptionResponse]
+
+
+class AddonOptionsGroupedByCategory(BaseModel):
     """Schema for grouping addons by category"""
 
     category: str

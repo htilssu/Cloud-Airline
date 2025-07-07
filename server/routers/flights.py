@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    "",
     tags=["Chuyến bay"],
     name="Lấy danh sách chuyến bay, có điều kiện",
     description="Lấy danh sách chuyến bay",
