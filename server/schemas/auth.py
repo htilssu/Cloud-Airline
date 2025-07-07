@@ -49,6 +49,6 @@ class UserResponse(BaseModel):
 
 class TokenResponse(BaseModel):
     """Schema for token response after login."""
-    
+
     access_token: str
     token_type: str = "bearer"
