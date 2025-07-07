@@ -1,7 +1,7 @@
-name: Server CI/CD
+.name: Server CI/CD
 
 on:
-  push:
+  push:.
     branches: [main, develop, feature/*]
     paths:
       - "server/**"
@@ -127,23 +127,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: htilssu/server
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./server
           file: ./server/Dockerfile
-          push: false
+          push: true
           tags: htilssu/cloud-airline-server:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -196,18 +185,6 @@ jobs:
           docker stop test-server test-postgres
           docker rm test-server test-postgres
           docker network rm test-network
-
-      - name: Push Docker image
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-        uses: docker/build-push-action@v5
-        with:
-          context: ./server
-          file: ./server/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   notify-success:
     needs: [test-server, build-docker-image]
