@@ -27,7 +27,7 @@ def upgrade() -> None:
     sa.Column('category', sa.String(), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False, server_default=sa.true()),
     sa.Column('metadata_json', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
