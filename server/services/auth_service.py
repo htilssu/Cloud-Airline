@@ -62,7 +62,7 @@ class AuthService:
             self.db.rollback()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Could no register user",
+                detail="Could not register user",
             ) from e
 
     def authenticate_user(self, login_data: UserLogin) -> User:
