@@ -104,6 +104,7 @@ def get_addon_options_by_category(
         )
 
     # Convert to response format with parsed metadata
+    # TODO: return object instead of list of dict
     result = []
     for option in options:
         metadata = None
