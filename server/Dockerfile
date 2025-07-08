@@ -9,9 +9,11 @@ RUN pip install debugpy
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy entrypoint script
+# Copy entrypoint scripts
 COPY .docker/entrypoint.sh /usr/local/bin/
+COPY .docker/entrypoint-dev.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint-dev.sh
 
 # Copy toàn bộ source code của server vào container
 COPY . .
