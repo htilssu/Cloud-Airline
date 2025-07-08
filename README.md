@@ -1,4 +1,5 @@
 [![Build](https://github.com/htilssu/Cloud-Airline/actions/workflows/build-frontend.yml/badge.svg)](https://github.com/htilssu/Cloud-Airline/actions/workflows/build-frontend.yml)
+[![Server CI/CD](https://github.com/htilssu/Cloud-Airline/actions/workflows/server-ci.yml/badge.svg)](https://github.com/htilssu/Cloud-Airline/actions/workflows/server-ci.yml)
 
 # Hướng dẫn Cài đặt và Phát triển Dự án QLDAPM
 
