@@ -66,8 +66,13 @@ const SignUp = () => {
                 <div className="space-y-6 pt-10">
                   <h1 className="text-4xl font-bold text-gray-900">CREATE ACCOUNT</h1>
                   <p className="text-gray-600">
-                    Don't have an account?{ " " }
-                    <button className="text-gray-900 underline font-medium hover:no-underline">Create now</button>
+                    Already have an account?{ " " }
+                    <button 
+                      className="text-gray-900 underline font-medium hover:no-underline"
+                      onClick={() => navigate('/signin')}
+                    >
+                      Sign in
+                    </button>
                   </p>
                 </div>
 
