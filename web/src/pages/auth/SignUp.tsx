@@ -28,6 +28,7 @@ const SignUp = () => {
     handleSubmit,
     setValue,
     clearErrors,
+    watch,
     formState : { errors }
   } = useForm<SignUpSchema> ({
     resolver : zodResolver (signUpSchema),
@@ -69,7 +70,7 @@ const SignUp = () => {
                     Already have an account?{ " " }
                     <button 
                       className="text-gray-900 underline font-medium hover:no-underline"
-                      onClick={() => navigate('/signin')}
+                      onClick={() => navigate('/auth/sign-in')}
                     >
                       Sign in
                     </button>
