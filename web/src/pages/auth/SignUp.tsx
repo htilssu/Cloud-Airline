@@ -133,7 +133,7 @@ const SignUp = () => {
                     {/*@ts-ignore*/ }
                     <PhoneInput
                       placeholder="9-digit number"
-                      value=""
+                      value={watch('phone')}
                       inputProps={ {
                         name : 'phone',
                         required : true,
