@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import axios from "axios"
+import axios from "@/lib/axios"
 import { useAuthStore } from "@/stores/auth-store";
 
 export function useAuthCheck() {
