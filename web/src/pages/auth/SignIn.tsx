@@ -11,11 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { authApis } from "@/apis/auth";
 import { useToastNotifications } from "@/hooks/useToastNotification";
-import Cookies from 'js-cookie'
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const isMobile = useIsMobile ()
   const toast = useToastNotifications ()
+  const navigate = useNavigate ()
 
   const [saveAccount, setSaveAccount] = useState (false)
   const [showPassword, setShowPassword] = useState (false)
@@ -34,12 +35,12 @@ const SignIn = () => {
     mutationFn : authApis.signIn,
     onSuccess : (data) => {
       console.log ("signIn", data)
-      Cookies.set("authToken",data.accessToken,{expires:7})
       toast.showSuccess ("Sign In Success")
+      navigate ('/')
     },
     onError : (errors: any) => {
       console.error ("signIn", errors)
-      toast.showError ("Failed to sign In")
+      toast.showError (errors?.message || "Failed to sign In")
     },
   })
   const onSubmit = (data: SignInSchema) => {
@@ -56,10 +57,10 @@ const SignIn = () => {
         // Desktop Environment
         <>
           <div className='grid grid-cols-2 min-h-screen'>
-            <div className='col-span-1'>
+            <div className='col-span-1 flex justify-center flex-col min-h-screen'>
               <div className='grid grid-cols-12'>
                 <div className='col-span-3'></div>
-                <div className='col-span-6 pt-14'>
+                <div className='col-span-6'>
                   {/*Left Content*/ }
                   <h3 className='font-raleway'>Cloud Airline</h3>
                   <div className="w-full max-w-md mx-auto space-y-6">
@@ -149,7 +150,6 @@ const SignIn = () => {
                         }
                       </Button>
                     </form>
-
                     {/* Divider */ }
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
@@ -172,19 +172,10 @@ const SignIn = () => {
                         Continue with Google
                       </Button>
 
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full py-3 bg-transparent"
-                        // onClick={() => facebookSignInMutation.mutate()}
-                        // disabled={isLoading}
-                      >
-                        Continue with Facebook
-                      </Button>
                     </div>
                   </div>
+                  <div className='col-span-3'></div>
                 </div>
-                <div className='col-span-3'></div>
               </div>
             </div>
             <div className='col-span-1 bg-primary rounded-l-4xl p-4'>
