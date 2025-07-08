@@ -1,3 +1,5 @@
+[![Build](https://github.com/htilssu/Cloud-Airline/actions/workflows/build-frontend.yml/badge.svg)](https://github.com/htilssu/Cloud-Airline/actions/workflows/build-frontend.yml)
+
 # Hướng dẫn Cài đặt và Phát triển Dự án QLDAPM
 
 Chào mừng đến với dự án! Tài liệu này hướng dẫn cách cài đặt môi trường và bắt đầu phát triển cho cả frontend và backend.
