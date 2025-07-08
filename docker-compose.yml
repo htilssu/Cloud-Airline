@@ -6,7 +6,7 @@ x-postgres-variables: &postgres-env
 
 services:
   server:
-    image: htilssu/server:dev
+    image: htilssu/cloud-airline-server:latest
     build:
       context: ./server
       dockerfile: Dockerfile

@@ -9,3 +9,17 @@ class FlightBase(BaseModel):
     arrival_time: datetime
     base_price: float
     status: FlightStatus
+
+
+class FlightCreate(FlightBase):
+    pass
+
+
+class Flight(FlightBase):
+    id: int
+    plane_id: int
+    departure_airport_id: str
+    arrival_airport_id: str
+
+    class Config:
+        orm_mode = True

@@ -22,8 +22,8 @@ Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt các công c
 Clone repository về máy của bạn:
 
 ```bash
-git clone <your-repository-url>
-cd QLDAPM
+git clone https://github.com/htilssu/Cloud-Airline.git
+cd Cloud-Airline
 ```
 
 Mọi cấu hình cần thiết cho môi trường Docker đều đã được định nghĩa trong file `docker-compose.yml`.
