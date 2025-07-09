@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Plane, MapPin, Calendar, Users } from 'lucide-react';
 import UIDatePicker from '../components/ui/datepicker';
@@ -20,25 +20,18 @@ const FlightsListPage: React.FC = () => {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Removed unused filters, only keep time and sort
   const [timeFrom, setTimeFrom] = useState(''); // HH:mm
   const [timeTo, setTimeTo] = useState('');
   const [sortPrice, setSortPrice] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchFlights = async (params: any = {}) => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get('/flights', { params });
-      let flightsData = res.data;
-      // Sort by price if needed (frontend sort)
-      if (params.sort_price === 'asc') {
-        flightsData = flightsData.slice().sort((a: Flight, b: Flight) => a.basePrice - b.basePrice);
-      } else if (params.sort_price === 'desc') {
-        flightsData = flightsData.slice().sort((a: Flight, b: Flight) => b.basePrice - a.basePrice);
-      }
-      setFlights(flightsData);
+      setFlights(res.data);
     } catch (err: any) {
       setError('Không thể tải danh sách chuyến bay.');
     } finally {
@@ -47,8 +40,31 @@ const FlightsListPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchFlights();
-  }, []);
+    // Parse query params from URL and set initial filter state
+    const params = new URLSearchParams(location.search);
+    const time_from = params.get('time_from') || '';
+    const time_to = params.get('time_to') || '';
+    setTimeFrom(time_from);
+    setTimeTo(time_to);
+    fetchFlights({
+      time_from: time_from || undefined,
+      time_to: time_to || undefined,
+    });
+  }, [location.search]);
+
+  // Sort flights in-place when sortPrice changes, do not refetch
+  React.useEffect(() => {
+    if (!sortPrice) return;
+    setFlights(prev => {
+      const sorted = [...prev];
+      if (sortPrice === 'asc') {
+        sorted.sort((a, b) => a.basePrice - b.basePrice);
+      } else if (sortPrice === 'desc') {
+        sorted.sort((a, b) => b.basePrice - a.basePrice);
+      }
+      return sorted;
+    });
+  }, [sortPrice]);
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +101,7 @@ const FlightsListPage: React.FC = () => {
           <select
             className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
             value={sortPrice}
-            onChange={e => { setSortPrice(e.target.value); fetchFlights({ time_from: timeFrom || undefined, time_to: timeTo || undefined, sort_price: e.target.value || undefined }); }}
+            onChange={e => setSortPrice(e.target.value)}
           >
             <option value="">Sắp xếp theo giá</option>
             <option value="asc">Giá tăng dần</option>

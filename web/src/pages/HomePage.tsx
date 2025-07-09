@@ -46,6 +46,7 @@ const HomePage = () => {
       date: departDate ? departDate.toISOString().split('T')[0] : '',
       passengers: String(passengers),
       tripType,
+      sort_price: '', // giữ đồng bộ với filter trang danh sách chuyến bay
     });
     navigate(`/flights?${params.toString()}`);
   }
