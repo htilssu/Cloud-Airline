@@ -31,7 +31,14 @@ const FlightsListPage: React.FC = () => {
     setError(null);
     try {
       const res = await axios.get('/flights', { params });
-      setFlights(res.data);
+      let flightsData = res.data;
+      // Sort by price if needed (frontend sort)
+      if (params.sort_price === 'asc') {
+        flightsData = flightsData.slice().sort((a: Flight, b: Flight) => a.basePrice - b.basePrice);
+      } else if (params.sort_price === 'desc') {
+        flightsData = flightsData.slice().sort((a: Flight, b: Flight) => b.basePrice - a.basePrice);
+      }
+      setFlights(flightsData);
     } catch (err: any) {
       setError('Không thể tải danh sách chuyến bay.');
     } finally {
@@ -60,7 +67,7 @@ const FlightsListPage: React.FC = () => {
         </h1>
 
         {/* Bộ lọc chỉ còn thời gian và sắp xếp theo giá */}
-        <form onSubmit={handleFilter} className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/80 p-4 rounded-xl shadow">
+        <form onSubmit={handleFilter} className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 bg-white/80 p-4 rounded-xl shadow">
           <input
             type="time"
             placeholder="Giờ đi từ"
@@ -84,7 +91,7 @@ const FlightsListPage: React.FC = () => {
             <option value="asc">Giá tăng dần</option>
             <option value="desc">Giá giảm dần</option>
           </select>
-          <Button type="submit" className="col-span-1 md:col-span-3 mt-2 md:mt-0 bg-blue-600 text-white w-full md:w-auto">Lọc chuyến bay</Button>
+          <Button type="submit" className="col-span-1 md:col-span-4 mt-2 md:mt-0 bg-blue-600 text-white w-full md:w-auto">Lọc chuyến bay</Button>
         </form>
 
         {loading ? (

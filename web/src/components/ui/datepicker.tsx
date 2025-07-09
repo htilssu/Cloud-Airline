@@ -37,6 +37,7 @@ const UIDatePicker: React.FC<DatePickerProps> = ({
         disabled={disabled}
         className={`w-full h-12 pr-4 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 bg-white text-base ${rest.showTimeSelect ? '' : 'pl-10'}`}
         popperPlacement="bottom"
+        dateFormat={rest.dateFormat || "dd/MM/yyyy"}
         {...rest}
       />
     </div>
