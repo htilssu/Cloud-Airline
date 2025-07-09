@@ -302,7 +302,7 @@ def seed_data():
                         flight_number=flight_number,
                         departure_time=departure_time,
                         arrival_time=arrival_time,
-                        base_price=random.uniform(50.0, 500.0),
+                        base_price=random.uniform(700000, 4000000),
                         status=random.choice(list(FlightStatus)),
                         plane_id=plane.id,
                         departure_airport_id=departure_airport.id,

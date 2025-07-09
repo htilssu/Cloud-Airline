@@ -9,7 +9,7 @@ class AuthApis {
 //   POST
   async signUp({ email, password, name, phone }: SignUpSchema) {
     try {
-      const res = await axios.post ('/auth/register', { email, password, full_name : name, phone_number : phone });
+      const res = await axios.post ('/auth/register', { email, password, fullName: name, phoneNumber: phone });
       Cookies.set ("authToken", res.data.accessToken, { expires : 7 })
       setAuthenticated (true)
       return res.data

@@ -1,5 +1,5 @@
 import enum
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import (
     Column,
     Integer,
@@ -26,7 +26,13 @@ class Booking(Base):
     booking_time = Column(DateTime, default=datetime.now)
     total_price = Column(Float, nullable=False)
     status = Column(Enum(BookingStatus), nullable=False, default=BookingStatus.PENDING)
+    expires_at = Column(DateTime, nullable=False)
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="bookings")
     tickets = relationship("Ticket", back_populates="booking")
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.expires_at:
+            self.expires_at = datetime.now() + timedelta(minutes=30)

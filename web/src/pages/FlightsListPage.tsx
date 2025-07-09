@@ -42,13 +42,13 @@ const FlightsListPage: React.FC = () => {
   useEffect(() => {
     // Parse query params from URL and set initial filter state
     const params = new URLSearchParams(location.search);
-    const time_from = params.get('time_from') || '';
-    const time_to = params.get('time_to') || '';
-    setTimeFrom(time_from);
-    setTimeTo(time_to);
+    const timeFrom = params.get('time_from') || '';
+    const timeTo = params.get('time_to') || '';
+    setTimeFrom(timeFrom);
+    setTimeTo(timeTo);
     fetchFlights({
-      time_from: time_from || undefined,
-      time_to: time_to || undefined,
+      timeFrom: timeFrom || undefined,
+      timeTo: timeTo || undefined,
     });
   }, [location.search]);
 
@@ -69,9 +69,9 @@ const FlightsListPage: React.FC = () => {
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
     fetchFlights({
-      time_from: timeFrom || undefined,
-      time_to: timeTo || undefined,
-      sort_price: sortPrice || undefined,
+      timeFrom: timeFrom || undefined,
+      timeTo: timeTo || undefined,
+      sortPrice: sortPrice || undefined,
     });
   };
 

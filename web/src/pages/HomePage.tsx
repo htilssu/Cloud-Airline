@@ -46,7 +46,7 @@ const HomePage = () => {
       date: departDate ? departDate.toISOString().split('T')[0] : '',
       passengers: String(passengers),
       tripType,
-      sort_price: '', // giữ đồng bộ với filter trang danh sách chuyến bay
+      sortPrice: '', // giữ đồng bộ với filter trang danh sách chuyến bay
     });
     navigate(`/flights?${params.toString()}`);
   }
@@ -373,7 +373,7 @@ const HomePage = () => {
             <div>
               <h6 className="font-semibold mb-4">Dịch vụ</h6>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Đặt vé máy bay</a></li>
+                <li><button onClick={() => navigate('/flights')} className="hover:text-white transition-colors">Đặt vé máy bay</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Check-in online</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Quản lý đặt chỗ</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Hành lý</a></li>
@@ -384,7 +384,7 @@ const HomePage = () => {
               <h6 className="font-semibold mb-4">Hỗ trợ</h6>
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">Trung tâm trợ giúp</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Liên hệ</a></li>
+                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition-colors">Liên hệ</button></li>
                 <li><a href="#" className="hover:text-white transition-colors">Câu hỏi thường gặp</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Chính sách hoàn tiền</a></li>
               </ul>
