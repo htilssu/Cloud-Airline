@@ -1,0 +1,79 @@
+/* Hide number input spinners for a cleaner look */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+@import 'react-datepicker/dist/react-datepicker.css';
+
+/* Custom styles for the DatePicker */
+.custom-datepicker .react-datepicker__input-container input {
+  width: 100%;
+  height: 3rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 1rem;
+  outline: none;
+  background: white;
+}
+
+.custom-datepicker .react-datepicker__input-container input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.react-datepicker {
+  font-family: inherit;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
+  z-index: 9999;
+}
+
+.react-datepicker__header {
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+.react-datepicker__day--selected, 
+.react-datepicker__day--keyboard-selected {
+  background: #3b82f6;
+  color: #ffffff;
+  border-radius: 0.375rem;
+}
+
+.react-datepicker__day:hover {
+  background: #dbeafe;
+  border-radius: 0.375rem;
+}
+
+.react-datepicker__day--today {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 0.375rem;
+}
+
+.react-datepicker__current-month {
+  font-weight: 600;
+  color: #374151;
+}
+
+.react-datepicker__navigation {
+  top: 1rem;
+}
+
+.react-datepicker__navigation--previous {
+  left: 1rem;
+}
+
+.react-datepicker__navigation--next {
+  right: 1rem;
+}

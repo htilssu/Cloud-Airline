@@ -15,7 +15,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 # Copy dependencies đã cài ở stage 1
 COPY --from=deps /app/node_modules ./node_modules
-COPY vite.config.ts .
+COPY . .
 
 # Expose port của Vite dev server
 EXPOSE 5173
