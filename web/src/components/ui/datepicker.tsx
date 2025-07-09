@@ -1,7 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import '../../pages/HomePage.datepicker.css';
+import '../../../styles/HomePage.datepicker.css';
 
 
 import { DatePickerProps as ReactDatePickerProps } from 'react-datepicker';

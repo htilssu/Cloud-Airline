@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useIsMobile } from "@/hooks/useIsMobile";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +15,6 @@ import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 
 const SignUp = () => {
-  const isMobile = useIsMobile ()
   const toast = useToastNotifications ()
   const navigate = useNavigate ()
 
@@ -43,9 +41,11 @@ const SignUp = () => {
       toast.showSuccess ("Sign up Success")
       navigate ('/')
     },
-    onError : (errors: any) => {
-      console.error ("signUp", errors)
-      toast.showError (errors?.message || "Failed to sign up")
+    onError: (errors) => {
+      if( errors instanceof Error){
+        console.error("signUp", errors);
+        toast.showError(errors?.message || "Failed to sign up");
+      }
     },
   })
   const onSubmit = (data: SignUpSchema) => {
@@ -55,16 +55,16 @@ const SignUp = () => {
 
   return (
     <>
-      <div className='grid grid-cols-2 min-h-screen'>
-        <div className='col-span-1 flex justify-center flex-col min-h-screen'>
+      <div className='flex flex-col relative lg:grid lg:grid-cols-12 min-h-screen'>
+        <div className='lg:col-span-6 z-10 flex justify-center flex-col min-h-screen'>
           <div className='grid grid-cols-12'>
-            <div className='col-span-3'></div>
-            <div className='col-span-6'>
+            <div className='col-span-1 lg:col-span-3'></div>
+            <div className='col-span-10 lg:col-span-6 bg-white p-8 rounded-lg lg:p-0'>
               {/*Left Content*/ }
-              <h3 className='font-raleway'>Cloud Airline</h3>
               <div className="w-full max-w-md mx-auto space-y-6">
                 {/* Header */ }
-                <div className="space-y-6 pt-10">
+                <h3 className='font-raleway'>Cloud Airline</h3>
+                <div className="space-y-6 pt-4 lg:pt-10">
                   <h1 className="text-4xl font-bold text-gray-900">CREATE ACCOUNT</h1>
                   <p className="text-gray-600">
                     Already have an account?{ " " }
@@ -131,7 +131,7 @@ const SignUp = () => {
                   {/* Phone Fields*/ }
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="text-gray-700">Phone Number</Label>
-                    {/*@ts-ignore*/ }
+                    {/*@ts-expected-error*/ }
                     <PhoneInput
                       placeholder="9-digit number"
                       value={watch('phone')}
@@ -209,13 +209,11 @@ const SignUp = () => {
 
                 </div>
               </div>
-              <div className='col-span-3'></div>
+              <div className='col-span-1 lg:col-span-3'></div>
             </div>
           </div>
         </div>
-        <div className='col-span-1 bg-primary rounded-l-4xl p-4'>
-          hi
-        </div>
+        <img src='/images/airplane.jpg' alt='Airplane' className='lg:col-span-6 lg:rounded-l-4xl lg:relative absolute flex-0 overflow-auto h-screen w-full' />
       </div>
     </>
 

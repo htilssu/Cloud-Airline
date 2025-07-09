@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
 import UIDatePicker from '../components/ui/datepicker'
 import { Calendar, MapPin, Plane, Users, ArrowRightLeft, Menu, X } from 'lucide-react'
 import LocationInput from '../components/LocationInput'

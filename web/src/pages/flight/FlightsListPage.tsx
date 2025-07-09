@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { Plane, MapPin, Calendar, Users } from 'lucide-react';
-import UIDatePicker from '../components/ui/datepicker';
-import axios from '../lib/axios';
+import { Button } from '../../components/ui/button';
+import { Plane, Calendar, Users } from 'lucide-react';
+import axios from '../../lib/axios';
 
 interface Flight {
   id: string;

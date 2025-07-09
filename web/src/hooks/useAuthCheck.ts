@@ -11,8 +11,11 @@ export function useAuthCheck() {
         // NOT YET
         await axios.get("/api/check-auth")
         setIsAuthenticated(true)
-      } catch (err) {
-        setIsAuthenticated(false)
+      } catch (error) {
+        if(error instanceof Error) {
+          setIsAuthenticated(false)
+          throw error
+        }
       }
     }
     checkAuth()
