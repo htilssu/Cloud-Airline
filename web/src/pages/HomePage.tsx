@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
+import UIDatePicker from '../components/ui/datepicker'
 import { Calendar, MapPin, Plane, Users, ArrowRightLeft, Menu, X } from 'lucide-react'
 import LocationInput from '../components/LocationInput'
 import { Airport } from '../apis/airports'
@@ -12,8 +13,8 @@ const HomePage = () => {
   const [toLocation, setToLocation] = useState('')
   const [fromAirport, setFromAirport] = useState<Airport | null>(null)
   const [toAirport, setToAirport] = useState<Airport | null>(null)
-  const [departDate, setDepartDate] = useState('')
-  const [returnDate, setReturnDate] = useState('')
+  const [departDate, setDepartDate] = useState<Date | null>(null)
+  const [returnDate, setReturnDate] = useState<Date | null>(null)
   const [passengers, setPassengers] = useState(1)
   const [tripType, setTripType] = useState('roundtrip')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -41,8 +42,8 @@ const HomePage = () => {
     console.log('Tìm kiếm chuyến bay:', {
       from: fromAirport?.id || fromLocation,
       to: toAirport?.id || toLocation,
-      departDate,
-      returnDate,
+      departDate: departDate ? departDate.toISOString().split('T')[0] : '',
+      returnDate: returnDate ? returnDate.toISOString().split('T')[0] : '',
       passengers,
       tripType
     })
@@ -272,12 +273,15 @@ const HomePage = () => {
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400 pointer-events-none" />
-                  <Input
-                    type="date"
-                    value={departDate}
-                    onChange={(e) => setDepartDate(e.target.value)}
-                    className="pl-10 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    min={new Date().toISOString().split('T')[0]}
+                  <UIDatePicker
+                    selected={departDate}
+                    onChange={(date) => {
+                      setDepartDate(date)
+                      if (returnDate && date && returnDate < date) setReturnDate(null)
+                    }}
+                    minDate={new Date()}
+                    placeholder="Chọn ngày đi"
+                    className="pl-10"
                   />
                 </div>
               </div>
@@ -289,13 +293,13 @@ const HomePage = () => {
                   </label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400 pointer-events-none" />
-                    <Input
-                      type="date"
-                      value={returnDate}
-                      onChange={(e) => setReturnDate(e.target.value)}
-                      className="pl-10 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      min={departDate || new Date().toISOString().split('T')[0]}
+                    <UIDatePicker
+                      selected={returnDate}
+                      onChange={setReturnDate}
+                      minDate={departDate || new Date()}
+                      placeholder="Chọn ngày về"
                       disabled={!departDate}
+                      className="pl-10"
                     />
                   </div>
                 </div>
