@@ -1,3 +1,13 @@
+/* Hide number input spinners for a cleaner look */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 @import 'react-datepicker/dist/react-datepicker.css';
 
 /* Custom styles for the DatePicker */
@@ -6,7 +16,7 @@
   height: 3rem;
   border-radius: 0.5rem;
   border: 1px solid #d1d5db;
-  padding-left: 2.5rem;
+  padding-left: 1rem;
   padding-right: 1rem;
   font-size: 1rem;
   outline: none;

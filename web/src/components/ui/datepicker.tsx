@@ -3,7 +3,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../pages/HomePage.datepicker.css';
 
-export interface DatePickerProps {
+
+import { DatePickerProps as ReactDatePickerProps } from 'react-datepicker';
+
+export interface DatePickerProps extends Omit<ReactDatePickerProps, 'selected' | 'onChange' | 'minDate' | 'maxDate' | 'placeholderText' | 'disabled' | 'className'> {
   selected: Date | null;
   onChange: (date: Date | null) => void;
   minDate?: Date;
@@ -21,6 +24,7 @@ const UIDatePicker: React.FC<DatePickerProps> = ({
   placeholder,
   disabled,
   className = '',
+  ...rest
 }) => {
   return (
     <div className={`custom-datepicker ${className}`}>
@@ -30,10 +34,10 @@ const UIDatePicker: React.FC<DatePickerProps> = ({
         minDate={minDate}
         maxDate={maxDate}
         placeholderText={placeholder}
-        dateFormat="dd/MM/yyyy"
         disabled={disabled}
-        className="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 bg-white text-base"
+        className={`w-full h-12 pr-4 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-blue-500 bg-white text-base ${rest.showTimeSelect ? '' : 'pl-10'}`}
         popperPlacement="bottom"
+        {...rest}
       />
     </div>
   );

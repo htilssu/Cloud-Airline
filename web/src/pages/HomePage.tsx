@@ -39,16 +39,15 @@ const HomePage = () => {
   }
 
   const handleSearch = () => {
-    console.log('Tìm kiếm chuyến bay:', {
-      from: fromAirport?.id || fromLocation,
-      to: toAirport?.id || toLocation,
-      departDate: departDate ? departDate.toISOString().split('T')[0] : '',
-      returnDate: returnDate ? returnDate.toISOString().split('T')[0] : '',
-      passengers,
-      tripType
-    })
-    // Có thể navigate tới trang kết quả tìm kiếm
-    // navigate('/flights/search', { state: { searchData } })
+    // Chuyển hướng sang trang danh sách chuyến bay, truyền các tham số lọc qua query string
+    const params = new URLSearchParams({
+      from: fromAirport?.id || fromLocation || '',
+      to: toAirport?.id || toLocation || '',
+      date: departDate ? departDate.toISOString().split('T')[0] : '',
+      passengers: String(passengers),
+      tripType,
+    });
+    navigate(`/flights?${params.toString()}`);
   }
 
   const handleNavigation = (path: string) => {
