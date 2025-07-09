@@ -20,15 +20,10 @@ const FlightsListPage: React.FC = () => {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [date, setDate] = useState<Date | null>(null);
-  const [dateTime, setDateTime] = useState<Date | null>(null); // datetime picker
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
+  // Removed unused filters, only keep time and sort
   const [timeFrom, setTimeFrom] = useState(''); // HH:mm
   const [timeTo, setTimeTo] = useState('');
+  const [sortPrice, setSortPrice] = useState('');
   const navigate = useNavigate();
 
   const fetchFlights = async (params: any = {}) => {
@@ -51,15 +46,9 @@ const FlightsListPage: React.FC = () => {
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
     fetchFlights({
-      departure_airport_id: from || undefined,
-      arrival_airport_id: to || undefined,
-      flight_date: date ? date.toISOString().split('T')[0] : undefined,
-      flight_datetime: dateTime ? dateTime.toISOString() : undefined,
-      search: search || undefined,
-      min_price: minPrice || undefined,
-      max_price: maxPrice || undefined,
       time_from: timeFrom || undefined,
       time_to: timeTo || undefined,
+      sort_price: sortPrice || undefined,
     });
   };
 
@@ -70,62 +59,8 @@ const FlightsListPage: React.FC = () => {
           <Plane className="h-7 w-7 text-blue-600" /> Danh sách chuyến bay
         </h1>
 
-        {/* Bộ lọc & tìm kiếm */}
-        <form onSubmit={handleFilter} className="mb-8 grid grid-cols-1 md:grid-cols-7 gap-4 bg-white/80 p-4 rounded-xl shadow">
-          <input
-            type="text"
-            placeholder="Tìm mã chuyến, thành phố, sân bay..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
-          />
-          <input
-            type="text"
-            placeholder="Mã sân bay đi (VD: HAN)"
-            value={from}
-            onChange={e => setFrom(e.target.value.toUpperCase())}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
-          />
-          <input
-            type="text"
-            placeholder="Mã sân bay đến (VD: SGN)"
-            value={to}
-            onChange={e => setTo(e.target.value.toUpperCase())}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
-          />
-          <UIDatePicker
-            selected={date}
-            onChange={setDate}
-            minDate={new Date()}
-            placeholder="Ngày đi"
-            className="w-full"
-          />
-          <UIDatePicker
-            selected={dateTime}
-            onChange={setDateTime}
-            showTimeSelect
-            timeFormat="HH:mm"
-            timeIntervals={15}
-            dateFormat="dd/MM/yyyy HH:mm"
-            placeholder="Ngày & giờ đi cụ thể"
-            className="w-full"
-          />
-          <input
-            type="number"
-            placeholder="Giá từ (₫)"
-            min={0}
-            value={minPrice}
-            onChange={e => setMinPrice(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
-          />
-          <input
-            type="number"
-            placeholder="Đến (₫)"
-            min={0}
-            value={maxPrice}
-            onChange={e => setMaxPrice(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
-          />
+        {/* Bộ lọc chỉ còn thời gian và sắp xếp theo giá */}
+        <form onSubmit={handleFilter} className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white/80 p-4 rounded-xl shadow">
           <input
             type="time"
             placeholder="Giờ đi từ"
@@ -140,7 +75,16 @@ const FlightsListPage: React.FC = () => {
             onChange={e => setTimeTo(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
           />
-          <Button type="submit" className="col-span-1 md:col-span-6 mt-2 md:mt-0 bg-blue-600 text-white w-full md:w-auto">Lọc chuyến bay</Button>
+          <select
+            className="border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:ring-blue-500 outline-none"
+            value={sortPrice}
+            onChange={e => { setSortPrice(e.target.value); fetchFlights({ time_from: timeFrom || undefined, time_to: timeTo || undefined, sort_price: e.target.value || undefined }); }}
+          >
+            <option value="">Sắp xếp theo giá</option>
+            <option value="asc">Giá tăng dần</option>
+            <option value="desc">Giá giảm dần</option>
+          </select>
+          <Button type="submit" className="col-span-1 md:col-span-3 mt-2 md:mt-0 bg-blue-600 text-white w-full md:w-auto">Lọc chuyến bay</Button>
         </form>
 
         {loading ? (
