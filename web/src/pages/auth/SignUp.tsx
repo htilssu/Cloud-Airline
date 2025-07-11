@@ -42,9 +42,12 @@ const SignUp = () => {
       navigate ('/')
     },
     onError: (errors) => {
-      if( errors instanceof Error){
+      if (errors instanceof Error) {
         console.error("signUp", errors);
         toast.showError(errors?.message || "Failed to sign up");
+      } else {
+        console.error("Unexpected error type during sign-up:", errors);
+        toast.showError("An unexpected error occurred. Please try again.");
       }
     },
   })
