@@ -26,6 +26,7 @@ import {
   Airport,
   Plane as PlaneType,
 } from '../mock/Flights';
+import Header from '../components/Header';
 
 const FlightPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -131,10 +132,13 @@ const FlightPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-blue-700">Đang tải thông tin chuyến bay...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
+        <Header />
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-blue-700">Đang tải thông tin chuyến bay...</p>
+          </div>
         </div>
       </div>
     );
@@ -142,27 +146,31 @@ const FlightPage: React.FC = () => {
 
   if (error || !flight) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-2xl shadow-xl">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Lỗi</h1>
-          <p className="text-gray-600 mb-6">
-            {error || 'Không tìm thấy chuyến bay'}
-          </p>
-          <Button
-            onClick={() => navigate('/flights')}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Quay lại danh sách
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
+        <Header />
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center bg-white p-8 rounded-2xl shadow-xl">
+            <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Lỗi</h1>
+            <p className="text-gray-600 mb-6">
+              {error || 'Không tìm thấy chuyến bay'}
+            </p>
+            <Button
+              onClick={() => navigate('/flights')}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Quay lại danh sách
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 py-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
+      <Header />
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Button

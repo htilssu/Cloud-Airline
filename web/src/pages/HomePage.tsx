@@ -1,42 +1,41 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import UIDatePicker from '../components/ui/datepicker'
-import { Calendar, MapPin, Plane, Users, ArrowRightLeft, Menu, X } from 'lucide-react'
-import LocationInput from '../components/LocationInput'
-import { Airport } from '../apis/airports'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import UIDatePicker from '../components/ui/datepicker';
+import { Calendar, MapPin, Plane, Users, ArrowRightLeft } from 'lucide-react';
+import LocationInput from '../components/LocationInput';
+import { Airport } from '../apis/airports';
+import Header from '../components/Header';
 
 const HomePage = () => {
-  const navigate = useNavigate()
-  const [fromLocation, setFromLocation] = useState('')
-  const [toLocation, setToLocation] = useState('')
-  const [fromAirport, setFromAirport] = useState<Airport | null>(null)
-  const [toAirport, setToAirport] = useState<Airport | null>(null)
-  const [departDate, setDepartDate] = useState<Date | null>(null)
-  const [returnDate, setReturnDate] = useState<Date | null>(null)
-  const [passengers, setPassengers] = useState(1)
-  const [tripType, setTripType] = useState('roundtrip')
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
+  const navigate = useNavigate();
+  const [fromLocation, setFromLocation] = useState('');
+  const [toLocation, setToLocation] = useState('');
+  const [fromAirport, setFromAirport] = useState<Airport | null>(null);
+  const [toAirport, setToAirport] = useState<Airport | null>(null);
+  const [departDate, setDepartDate] = useState<Date | null>(null);
+  const [returnDate, setReturnDate] = useState<Date | null>(null);
+  const [passengers, setPassengers] = useState(1);
+  const [tripType, setTripType] = useState('roundtrip');
   const handleSwapLocations = () => {
-    const tempLocation = fromLocation
-    const tempAirport = fromAirport
-    setFromLocation(toLocation)
-    setFromAirport(toAirport)
-    setToLocation(tempLocation)
-    setToAirport(tempAirport)
-  }
+    const tempLocation = fromLocation;
+    const tempAirport = fromAirport;
+    setFromLocation(toLocation);
+    setFromAirport(toAirport);
+    setToLocation(tempLocation);
+    setToAirport(tempAirport);
+  };
 
   const handleFromLocationChange = (value: string, airport?: Airport) => {
-    setFromLocation(value)
-    setFromAirport(airport || null)
-  }
+    setFromLocation(value);
+    setFromAirport(airport || null);
+  };
 
   const handleToLocationChange = (value: string, airport?: Airport) => {
-    setToLocation(value)
-    setToAirport(airport || null)
-  }
+    setToLocation(value);
+    setToAirport(airport || null);
+  };
 
   const handleSearch = () => {
     // Chuyển hướng sang trang danh sách chuyến bay, truyền các tham số lọc qua query string
@@ -49,124 +48,11 @@ const HomePage = () => {
       sortPrice: '', // giữ đồng bộ với filter trang danh sách chuyến bay
     });
     navigate(`/flights?${params.toString()}`);
-  }
-
-  const handleNavigation = (path: string) => {
-    navigate(path)
-    setIsMobileMenuOpen(false) // Đóng mobile menu khi navigate
-  }
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => handleNavigation('/')}> 
-              <Plane className="h-8 w-8 text-teal-600" />
-              <h1 className="text-2xl font-bold text-gray-800">Cloud Airline</h1>
-            </div>
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8">
-              <button 
-                onClick={() => handleNavigation('/')} 
-                className="text-gray-700 hover:text-teal-600 transition-colors"
-              >
-                Trang chủ
-              </button>
-              <button 
-                onClick={() => handleNavigation('/flights')} 
-                className="text-gray-700 hover:text-teal-600 transition-colors"
-              >
-                Chuyến bay
-              </button>
-              <button 
-                onClick={() => handleNavigation('/promotions')} 
-                className="text-gray-700 hover:text-orange-500 transition-colors"
-              >
-                Khuyến mãi
-              </button>
-              <button 
-                onClick={() => handleNavigation('/contact')} 
-                className="text-gray-700 hover:text-purple-600 transition-colors"
-              >
-                Liên hệ
-              </button>
-            </nav>
-            {/* Desktop Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                className="border border-teal-500 text-teal-600 bg-white hover:bg-teal-50 hover:text-teal-700"
-                onClick={() => handleNavigation('/auth/sign-in')}
-              >
-                Đăng nhập
-              </Button>
-              <Button 
-                className="bg-teal-500 text-white hover:bg-teal-600 shadow-md"
-                onClick={() => handleNavigation('/auth/sign-up')}
-              >
-                Đăng ký
-              </Button>
-            </div>
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-teal-600 p-2"
-              onClick={toggleMobileMenu}
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200">
-              <nav className="flex flex-col space-y-4">
-                <button 
-                  onClick={() => handleNavigation('/')} 
-                  className="text-gray-700 hover:text-teal-600 transition-colors text-left"
-                >
-                  Trang chủ
-                </button>
-                <button 
-                  onClick={() => handleNavigation('/flights')} 
-                  className="text-gray-700 hover:text-teal-600 transition-colors text-left"
-                >
-                  Chuyến bay
-                </button>
-                <button 
-                  onClick={() => handleNavigation('/promotions')} 
-                  className="text-gray-700 hover:text-orange-500 transition-colors text-left"
-                >
-                  Khuyến mãi
-                </button>
-                <button 
-                  onClick={() => handleNavigation('/contact')} 
-                  className="text-gray-700 hover:text-purple-600 transition-colors text-left"
-                >
-                  Liên hệ
-                </button>
-                <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-                  <Button 
-                    className="border border-teal-500 text-teal-600 bg-white hover:bg-teal-50 hover:text-teal-700 w-full"
-                    onClick={() => handleNavigation('/auth/sign-in')}
-                  >
-                    Đăng nhập
-                  </Button>
-                  <Button 
-                    className="bg-teal-500 text-white hover:bg-teal-600 w-full shadow-md"
-                    onClick={() => handleNavigation('/auth/sign-up')}
-                  >
-                    Đăng ký
-                  </Button>
-                </div>
-              </nav>
-            </div>
-          )}
-        </div>
-      </header>
+      <Header />
       {/* Hero Section */}
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -176,7 +62,8 @@ const HomePage = () => {
               <span className="block text-teal-500">cùng Cloud Airline</span>
             </h2>
             <p className="text-xl text-gray-500 max-w-3xl mx-auto">
-              Đặt vé máy bay dễ dàng với giá tốt nhất. Hơn 1000 điểm đến trên toàn thế giới đang chờ bạn khám phá.
+              Đặt vé máy bay dễ dàng với giá tốt nhất. Hơn 1000 điểm đến trên
+              toàn thế giới đang chờ bạn khám phá.
             </p>
           </div>
           {/* Flight Search Form */}
@@ -242,9 +129,12 @@ const HomePage = () => {
                     value={passengers}
                     onChange={(e) => setPassengers(parseInt(e.target.value))}
                     className="pl-10 h-12 w-full border border-gray-300 rounded-md focus:border-teal-500 focus:ring-teal-500 bg-white"
+                    aria-label="Chọn số hành khách"
                   >
-                    {[1,2,3,4,5,6,7,8,9].map(num => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'người' : 'người'}</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                      <option key={num} value={num}>
+                        {num} {num === 1 ? 'người' : 'người'}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -261,8 +151,9 @@ const HomePage = () => {
                   <UIDatePicker
                     selected={departDate}
                     onChange={(date) => {
-                      setDepartDate(date)
-                      if (returnDate && date && returnDate < date) setReturnDate(null)
+                      setDepartDate(date);
+                      if (returnDate && date && returnDate < date)
+                        setReturnDate(null);
                     }}
                     minDate={new Date()}
                     placeholder="Chọn ngày đi"
@@ -305,30 +196,49 @@ const HomePage = () => {
       <section className="py-20 bg-white/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-800 mb-4">Tại sao chọn Cloud Airline?</h3>
-            <p className="text-gray-500 text-lg">Những ưu điểm vượt trội của chúng tôi</p>
+            <h3 className="text-3xl font-bold text-gray-800 mb-4">
+              Tại sao chọn Cloud Airline?
+            </h3>
+            <p className="text-gray-500 text-lg">
+              Những ưu điểm vượt trội của chúng tôi
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6 rounded-xl bg-white shadow border border-gray-100">
               <div className="bg-teal-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Plane className="h-8 w-8 text-white" />
               </div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-2">Giá tốt nhất</h4>
-              <p className="text-gray-500">Cam kết giá vé máy bay tốt nhất thị trường với nhiều ưu đãi hấp dẫn</p>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                Giá tốt nhất
+              </h4>
+              <p className="text-gray-500">
+                Cam kết giá vé máy bay tốt nhất thị trường với nhiều ưu đãi hấp
+                dẫn
+              </p>
             </div>
             <div className="text-center p-6 rounded-xl bg-white shadow border border-gray-100">
               <div className="bg-orange-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="h-8 w-8 text-white" />
               </div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-2">Đa dạng điểm đến</h4>
-              <p className="text-gray-500">Hơn 1000 điểm đến trên toàn thế giới, từ các thành phố lớn đến thiên đường du lịch</p>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                Đa dạng điểm đến
+              </h4>
+              <p className="text-gray-500">
+                Hơn 1000 điểm đến trên toàn thế giới, từ các thành phố lớn đến
+                thiên đường du lịch
+              </p>
             </div>
             <div className="text-center p-6 rounded-xl bg-white shadow border border-gray-100">
               <div className="bg-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-2">Dịch vụ tận tâm</h4>
-              <p className="text-gray-500">Đội ngũ hỗ trợ khách hàng 24/7, sẵn sàng giải đáp mọi thắc mắc của bạn</p>
+              <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                Dịch vụ tận tâm
+              </h4>
+              <p className="text-gray-500">
+                Đội ngũ hỗ trợ khách hàng 24/7, sẵn sàng giải đáp mọi thắc mắc
+                của bạn
+              </p>
             </div>
           </div>
         </div>
@@ -343,34 +253,98 @@ const HomePage = () => {
                 <h5 className="text-lg font-bold">Cloud Airline</h5>
               </div>
               <p className="text-gray-400">
-                Hãng hàng không hàng đầu với dịch vụ chất lượng cao và giá cả phải chăng.
+                Hãng hàng không hàng đầu với dịch vụ chất lượng cao và giá cả
+                phải chăng.
               </p>
             </div>
             <div>
               <h6 className="font-semibold mb-4">Dịch vụ</h6>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-teal-400 transition-colors">Đặt vé máy bay</a></li>
-                <li><a href="#" className="hover:text-teal-400 transition-colors">Check-in online</a></li>
-                <li><a href="#" className="hover:text-teal-400 transition-colors">Quản lý đặt chỗ</a></li>
-                <li><a href="#" className="hover:text-teal-400 transition-colors">Hành lý</a></li>
+                <li>
+                  <a href="#" className="hover:text-teal-400 transition-colors">
+                    Đặt vé máy bay
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-teal-400 transition-colors">
+                    Check-in online
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-teal-400 transition-colors">
+                    Quản lý đặt chỗ
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-teal-400 transition-colors">
+                    Hành lý
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h6 className="font-semibold mb-4">Hỗ trợ</h6>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Trung tâm trợ giúp</a></li>
-                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition-colors">Liên hệ</button></li>
-                <li><a href="#" className="hover:text-white transition-colors">Câu hỏi thường gặp</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Chính sách hoàn tiền</a></li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Trung tâm trợ giúp
+                  </a>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/contact')}
+                    className="hover:text-white transition-colors"
+                  >
+                    Liên hệ
+                  </button>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Câu hỏi thường gặp
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Chính sách hoàn tiền
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h6 className="font-semibold mb-4">Về chúng tôi</h6>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Giới thiệu</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Tin tức</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Tuyển dụng</a></li>
-                <li><a href="#" className="hover:text-purple-400 transition-colors">Đối tác</a></li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Giới thiệu
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Tin tức
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Tuyển dụng
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    className="hover:text-purple-400 transition-colors"
+                  >
+                    Đối tác
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -380,7 +354,7 @@ const HomePage = () => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
