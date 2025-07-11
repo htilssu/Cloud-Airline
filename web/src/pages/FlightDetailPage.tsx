@@ -54,9 +54,8 @@ const FlightDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const [passengers, setPassengers] = useState<PassengerInfo[]>([
-    { name: '', ticketTypeId: 1, selectedAddons: [] }
-  ]);
+  const [passengers, setPassengers] = useState<PassengerInfo[]>([]);
+  const [defaultTicketTypeId, setDefaultTicketTypeId] = useState<number | null>(null);
   const [isBooking, setIsBooking] = useState(false);
 
   useEffect(() => {
