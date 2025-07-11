@@ -14,7 +14,8 @@ async def cleanup_expired_bookings_task():
     while True:
         try:
             # Get database session
-            db = next(get_db())
+            SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+            db: Session = SessionLocal()
             booking_service = BookingService(db)
 
             # Cleanup expired bookings
