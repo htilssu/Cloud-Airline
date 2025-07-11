@@ -44,16 +44,16 @@ class TicketTypesService:
             # Tạo mô tả cho từng loại vé
             description = self._get_ticket_type_description(ticket_type)
 
-            options.append(
-                {
-                    "id": ticket_type.id,
-                    "name": ticket_type.name,
-                    "price_multiplier": ticket_type.price_multiplier,
-                    "base_baggage_allowance_kg": ticket_type.base_baggage_allowance_kg,
-                    "calculated_price": calculated_price,
-                    "description": description,
-                }
-            )
+            # Create TicketTypeWithPrice object
+            option = {
+                "id": ticket_type.id,
+                "name": ticket_type.name,
+                "price_multiplier": ticket_type.price_multiplier,
+                "base_baggage_allowance_kg": ticket_type.base_baggage_allowance_kg,
+                "calculated_price": calculated_price,
+                "description": description,
+            }
+            options.append(option)
 
         return options
 
