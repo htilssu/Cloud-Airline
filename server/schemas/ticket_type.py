@@ -17,4 +17,5 @@ class TicketType(TicketTypeBase):
 class TicketTypeWithPrice(TicketType):
     """Schema for ticket type with calculated price for a specific flight"""
 
+    calculated_price: float | None = None
     description: str | None = None

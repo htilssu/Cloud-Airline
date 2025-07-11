@@ -148,3 +148,49 @@ html, body, #root {
     @apply text-xl font-semibold;
   }
 }
+
+/* Custom checkbox styling */
+input[type="checkbox"] {
+  accent-color: #16a34a; /* Green-600 color */
+}
+
+input[type="checkbox"]:checked {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+
+/* For browsers that don't support accent-color */
+@supports not (accent-color: #16a34a) {
+  input[type="checkbox"] {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: white;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  input[type="checkbox"]:checked {
+    background-color: #16a34a;
+    border-color: #16a34a;
+  }
+  
+  input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: -1px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  input[type="checkbox"]:focus {
+    outline: 2px solid #16a34a;
+    outline-offset: 2px;
+  }
+}

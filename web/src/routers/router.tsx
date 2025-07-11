@@ -4,6 +4,8 @@ import SignUp from '../pages/auth/SignUp';
 import NotFoundPage from '../components/NotFoundPage';
 import HomePage from '@/pages/HomePage';
 import FlightsListPage from '@/pages/FlightsListPage';
+import FlightDetailPage from '@/pages/FlightDetailPage';
+import BookingDetailPage from '@/pages/BookingDetailPage';
 import FlightPage from '@/pages/FlightPage';
 
 // Tạo các placeholder components cho các trang mới
@@ -54,6 +56,14 @@ export const router = createBrowserRouter([
   {
     path: '/flights/:id',
     element: <FlightPage />,
+  },
+  {
+    path: '/flights/:flightId',
+    element: <FlightDetailPage />,
+  },
+  {
+    path: '/bookings/:bookingId',
+    element: <BookingDetailPage />,
   },
   {
     path: '/promotions',
