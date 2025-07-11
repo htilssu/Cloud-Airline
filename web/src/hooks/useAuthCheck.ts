@@ -14,7 +14,7 @@ export function useAuthCheck() {
       } catch (error) {
         if(error instanceof Error) {
           setIsAuthenticated(false)
-          throw error
+          console.error("Authentication check failed:", error)
         }
       }
     }
