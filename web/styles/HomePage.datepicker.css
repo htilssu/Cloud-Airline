@@ -8,7 +8,6 @@ input[type=number] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
-@import 'react-datepicker/dist/react-datepicker.css';
 
 /* Custom styles for the DatePicker */
 .custom-datepicker .react-datepicker__input-container input {

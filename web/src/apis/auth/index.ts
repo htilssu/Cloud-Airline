@@ -2,7 +2,6 @@ import axios from "@/lib/axios";
 import Cookies from "js-cookie";
 import { useAuthStore } from "@/stores/auth-store";
 import { SignUpSchema } from "@/lib/validators/auth";
-
 const setAuthenticated = useAuthStore.getState ().setIsAuthenticated
 
 class AuthApis {
@@ -13,9 +12,11 @@ class AuthApis {
       Cookies.set ("authToken", res.data.accessToken, { expires : 7 })
       setAuthenticated (true)
       return res.data
-    } catch (error: any) {
-      console.error (error.message);
-      throw error;
+    } catch (error) {
+      if(error instanceof Error) {
+        console.error (error.message);
+        throw error;
+      }
     }
   }
 
@@ -25,9 +26,11 @@ class AuthApis {
       Cookies.set ("authToken", res.data.accessToken, { expires : 7 })
       setAuthenticated (true)
       return res.data
-    } catch (error: any) {
-      console.error (error)
-      throw error;
+    } catch (error) {
+      if ( error instanceof Error ) {
+        console.error (error.message);
+        throw error;
+      }
     }
   }
 }
